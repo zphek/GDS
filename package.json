@@ -4,7 +4,9 @@
   "description": "Cloud storage project.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "client": "cd __client && npm run dev",
+    "server": "cd __server && npx nodemon app.js"
   },
   "repository": {
     "type": "git",
