@@ -36,7 +36,36 @@ Router
     }
 
     res.send(req.body);
-});
+})
+
+.post("/getfiles", (req, res)=>{
+    let {username} = req.body;
+
+    if (username) {
+    let files = fs.readdirSync(`./storage/${username}/user_files`, { withFileTypes: true });
+    // Map the array to include file information (name, extension, and creation date)
+    files = files.map(file => {
+      const fullPath = `./storage/${username}/user_files/${file.name}`;
+      const stats = fs.statSync(fullPath);
+      const isFile = file.isFile();
+      const nameWithoutExtension = isFile ? file.name.replace(/\.[^/.]+$/, "") : file.name;
+      return {
+        name: nameWithoutExtension,
+        type: isFile ? 'file' : 'directory',
+        extension: isFile ? file.name.split('.').pop() : null,
+        creationDate: stats.birthtime.toLocaleDateString()
+      };
+    });
+    res.json(files);
+    return;
+  }
+
+
+    res.json({
+        mensaje: "No usuario.",
+        logueado: false
+    });
+})
 
 
 module.exports = Router;
