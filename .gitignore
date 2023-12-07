@@ -2,3 +2,4 @@ __client/node_modules
 __client/dist
 
 __server/node_modules
+__server/storage/*
