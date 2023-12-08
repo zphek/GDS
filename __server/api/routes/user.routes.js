@@ -51,7 +51,11 @@ Router
     if(exists){
         fs.readFile(`./storage/${req.body.username}/password.txt`, 'utf8', (err, datos)=>{
             if(!err && datos == req.body.password){
-                res.send(datos);
+                res.json({
+                    mensaje: "Usuario logueado correctamente!",
+                    username: req.body.username,
+                    logueado: true
+                });
             } else {
                 res.json({
                     mensaje: "Usuario o contraseña incorrectos.",
@@ -59,7 +63,13 @@ Router
                 });
             }
         });
+        return;
     }
+
+    res.json({
+        mensaje: "Usuario no existe.",
+        logueado: false
+    });
 })
 
 .post("/create", (req, res)=>{
@@ -111,12 +121,30 @@ Router
     });
 })
 
-.post("/download", (req, res)=>{
-    const {username, namefile} = req.body;
+.post("/download", (req, res) => {
+    const { username, filename } = req.body;
+    const rutaArchivo = `./storage/${username}/user_files/${filename}`;
 
-    if(username){
-        
+    if (!username) {
+        res.status(400).json({
+            error: true,
+            message: "Usuario no existe"
+        });
+        return;
     }
-})
+
+    res.download(rutaArchivo, (err) => {
+        if (err) {
+            // Manejar errores, por ejemplo, archivo no encontrado
+            res.status(404).json({
+                error: true,
+                message: 'Archivo no encontrado'
+            });
+        } else {
+            // No envíes otra respuesta aquí
+            console.log("Archivo encontrado!");
+        }
+    });
+});
 
 module.exports = Router;
