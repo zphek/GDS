@@ -2,15 +2,21 @@ import Navbar from "../components/Navbar";
 import searchIcon from "../assets/search_gds.png";
 import flechaIcon from "../assets/flecha.png";
 import fileIcon from "../assets/files.png";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
+import AuthContext from "../contexts/AuthContext";
 
 const Home = () => {
 
     let [files, setFiles] = useState([]);
+    let {state, dispatch} = useContext(AuthContext);
     let [error, setError] = useState({
         error: false,
         message: ""
+    });
+    let [message, setMessage] = useState({
+        message: "",
+        uploaded: null
     });
 
     const handleFileUpload = (e) => {
@@ -20,7 +26,7 @@ const Home = () => {
     
         if (file) {
             var formData = new FormData();
-            formData.append('username', 'siloe');
+            formData.append('username', state.user);
             formData.append('file', file);
     
             axios.post('http://localhost:3000/api/upload', formData, {
@@ -30,8 +36,18 @@ const Home = () => {
             })
             .then(function (response) {
                 // Manejar la respuesta del servidor
-                setError(prev => { prev.error = response.data.uploaded; prev.message = response.data.mensaje })
                 console.log(response.data);
+                setMessage({
+                    message:response.data.message,
+                    uploaded:response.data.uploaded
+                });
+
+                setTimeout(()=>{
+                    setMessage({
+                        message: "",
+                        uploaded: null
+                    });
+                }, 2000);
             })
             .catch(function (error) {
                 // Manejar errores
@@ -45,7 +61,7 @@ const Home = () => {
     const handleFileDownload = (filename) => {
         axios.post("http://localhost:3000/api/download", {
             filename,
-            username: "siloe"
+            username: state.user
         }, {
             responseType: 'blob' // Indicar que esperamos una respuesta de tipo blob (binario)
         })
@@ -64,7 +80,7 @@ const Home = () => {
 
     useEffect(() => {
         axios.post("http://localhost:3000/api/getfiles", {
-            username: "siloe"
+            username: state.user
         }).then(({ data }) => {
             console.log(data)
             setFiles(data);
@@ -87,6 +103,10 @@ const Home = () => {
                         className="hidden"
                         onChange={handleFileUpload}
                     />
+
+                    {message.uploaded != null && (
+                        <h3 style={{color: (message.uploaded ? "green" : "red")}} className="mt-4 mb-4 text-base font-bold text-lg">{message.message}</h3>  
+                    )}
 
                     <div className="search flex flex-row gap-2 bg-[#1F2D36] items-center px-3 py-3 rounded-lg mt-5 block">
                         <img src={searchIcon} alt="" className="w-[20px] h-[20px]" />

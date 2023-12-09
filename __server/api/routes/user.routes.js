@@ -73,16 +73,38 @@ Router
 })
 
 .post("/create", (req, res)=>{
+    if(!(req.body.username && req.body.password)){
+        res.json({
+            message: "Faltan campos que llenar.",
+            error: true
+        });
+        return;
+    }
+
+    if(!fs.existsSync("./storage")){
+        fs.mkdirSync("./storage");
+    }
+
     let response = fs.existsSync(`./storage/${req.body.username}`);
 
     if(!response){
         fs.mkdirSync(`./storage/${req.body.username}`);
+        fs.mkdirSync(`./storage/${req.body.username}/user_files`)
         fs.writeFileSync(`./storage/${req.body.username}/password.txt`, req.body.password, (err)=>{
             console.log(err)
         });
+
+        res.json({
+            message: "El usuario ha sido creado correctamente!",
+            error: false
+        });
+        return;
     }
 
-    res.send(req.body);
+    res.send({
+        message: "Escoja otro nombre de usuario.",
+        error: true
+    });
 })
 
 .post("/getfiles", (req, res)=>{

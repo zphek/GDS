@@ -32,6 +32,7 @@ function handleSubmit(e, data, setError, dispatch, navigate){
         console.log(response);
 
         dispatch({type: "login", username: response.username});
+        document.cookie = `session=${response.username}; 2500; path=/`;
         navigate("/");
     }).catch(err=>{
         console.dir(err)
