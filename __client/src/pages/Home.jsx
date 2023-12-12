@@ -5,6 +5,7 @@ import fileIcon from "../assets/files.png";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import AuthContext from "../contexts/AuthContext";
+import FilesCard from "../components/FilesCard";
 
 const Home = () => {
 
@@ -17,6 +18,10 @@ const Home = () => {
     let [message, setMessage] = useState({
         message: "",
         uploaded: null
+    });
+    let [filter, setFilter] = useState({
+        show: false,
+        values: []
     });
 
     const handleFileUpload = (e) => {
@@ -58,28 +63,26 @@ const Home = () => {
         }
     };
 
-    const handleFileDownload = (filename) => {
-        axios.post("http://localhost:3000/api/download", {
-            filename,
-            username: state.user
-        }, {
-            responseType: 'blob' // Indicar que esperamos una respuesta de tipo blob (binario)
-        })
-        .then(response => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', filename);
-            document.body.appendChild(link);
-            link.click();
-        })
-        .catch(err => {
-            console.log(err);
-        });
-    }
+    const handleOnChange = (e)=>{
+        let value = e.target.value;
+        value.toLowerCase();
 
-    const handleOnChange = ()=>{
+        if(value == ""){
+            setFilter({
+                show: false,
+                values: []
+            })
+            return;
+        }
         
+        const filteredFiles = files.filter((file) => file.name.includes(value));
+
+        setFilter({
+            show: true,
+            values: filteredFiles
+        });
+
+        console.log(filteredFiles);
     }
 
     useEffect(() => {
@@ -114,7 +117,7 @@ const Home = () => {
 
                     <div className="search flex flex-row gap-2 bg-[#1F2D36] items-center px-3 py-3 rounded-lg mt-5 block">
                         <img src={searchIcon} alt="" className="w-[20px] h-[20px]" />
-                        <input type="text" name="" placeholder="Buscar" className="bg-transparent grow outline-none text-white" />
+                        <input type="text" name="" placeholder="Buscar" className="bg-transparent grow outline-none text-white" onChange={handleOnChange}/>
                         <img src={flechaIcon} alt="" className="w-[1em]" />
                     </div>
 
@@ -124,19 +127,12 @@ const Home = () => {
                         </h2>
 
                         <div className="archivos h-[500px] lg:h-[550px] overflow-scroll flex flex-col gap-x-2">
-                            {files.length > 0 ? files.map((file, index) => {
-
-                                return <div className="Archivo mt-3 text-white bg-slate-800 py-3 mt-2 px-8 rounded-xl hover:bg-slate-700 transition-[500ms] cursor-pointer" key={index} onClick={() => handleFileDownload(file.name + `.${file.extension}`)}>
-                                    <div className="flex flex-row items-center gap-x-3">
-                                        <img src={fileIcon} alt="" width={30} height={30} />
-                                        <h2 className="font-bold">{file.name}</h2>
-                                    </div>
-                                    <div className="flex flex-row justify-between items-center">
-                                        <h5 className="mt-3">{file.creationDate}</h5>
-                                        <h5 className="mt-3 px-5 py-2 bg-slate-700 rounded-lg">.{file.extension}</h5>
-                                    </div>
-                                </div>
-                            }) : <h2 className="text-white px-8 text-center py-5">No hay archivos que mostrar.</h2>}
+                            
+                            {filter.show ? filter.values.map((file, index)=>{
+                                return <FilesCard data={file} key={index}/>
+                            }) : (files.length > 0 ? files.map((file, index) => {
+                                return <FilesCard data={file} key={index}/>
+                            }) : <h2 className="text-white px-8 text-center py-5">No hay archivos que mostrar.</h2>)}
                         </div>
                     </section>
                 </main>
