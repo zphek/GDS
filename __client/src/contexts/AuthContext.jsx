@@ -6,7 +6,7 @@ const reducer = (state, action)=>{
     console.log(action);
     switch(action.type){
         case "login":
-            return {user: action.username};
+            return {...state, user: action.username};
         case "logout":
             return {user: null};
     }

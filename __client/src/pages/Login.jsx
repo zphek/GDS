@@ -78,7 +78,7 @@ const Login = () => {
                         Contraseña
                     </h3>
 
-                    <input type="text" className='py-3 bg-transparent outline-none border-b-2 border-[#FFC452] text-md font-bold'name="password" onChange={e=> handleChange(e, setFormData)}/>
+                    <input type="password" className='py-3 bg-transparent outline-none border-b-2 border-[#FFC452] text-md font-bold'name="password" onChange={e=> handleChange(e, setFormData)}/>
                     
                     <ul className='mt-4'>
                         <li><Link href="" className='text-[#FFC452] hover:text-white transition-[300ms]'>I forgot my password?</Link></li>
