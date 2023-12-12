@@ -1,8 +1,11 @@
 import axios from "axios";
 import fileIcon from "../assets/files.png";
+import { useContext } from "react";
+import AuthContext from "../contexts/AuthContext";
 
 const FilesCard = ({data, index}) => {
     let {name, extension, creationDate} = data;
+    let {state, dispatch} = useContext(AuthContext);
 
     const handleFileDownload = (filename) => {
         axios.post("http://localhost:3000/api/download", {
