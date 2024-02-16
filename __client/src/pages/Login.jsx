@@ -69,13 +69,13 @@ const Login = () => {
         <form className="mt-2 flex flex-col gap-y-3 lg:w-[25%] md:w-[40%] sm:w-[60%] w-[100%] text-white p-4 mt-10" onSubmit={e=> handleSubmit(e, formData, setError, dispatch, navigate)}>
             <div className='flex flex-col gap-y-5'>
                 <div className='flex flex-col'>
-                    <h3 className='font-base text-lg'>Usuario o email</h3>
+                    <h3 className='font-base text-lg'>User or email</h3>
                     <input type="text" name="username" id="" className='py-3 bg-transparent outline-none border-b-2 border-[#FFC452] text-md font-bold' onChange={e=> handleChange(e, setFormData)}/>
                 </div>
                 
                 <div className='flex flex-col'>
                     <h3 className='font-base text-lg'>
-                        Contraseña
+                        Password
                     </h3>
 
                     <input type="password" className='py-3 bg-transparent outline-none border-b-2 border-[#FFC452] text-md font-bold'name="password" onChange={e=> handleChange(e, setFormData)}/>
